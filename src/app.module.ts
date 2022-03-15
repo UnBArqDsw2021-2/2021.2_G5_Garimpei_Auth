@@ -20,8 +20,8 @@ import configuration from './config/configuration';
         username: configService.get('database.user'),
         password: configService.get('database.pass'),
         database: configService.get('database.db'),
-        entities: [__dirname + '/**/*.entity.ts'],
-        migrations: ['src/migrations/*.ts'],
+        entities: ['dist/**/*.entity.js'],
+        migrations: ['dist/migrations/*.js'],
         cli: {
           migrationsDir: 'src/migrations',
         },
