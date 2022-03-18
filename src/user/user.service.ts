@@ -4,7 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { hashSync } from 'bcrypt';
+import { FindConditions, FindOneOptions, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -13,17 +14,18 @@ import { User } from './entities/user.entity';
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const user = await this.userRepository.findOne({
+    const userExists = await this.userRepository.findOne({
       email: createUserDto.email,
     });
-    if (user) {
+    if (userExists) {
       throw new BadRequestException(`Email already in use`);
     }
-    return this.userRepository.save(createUserDto);
+    const user = this.userRepository.create(createUserDto);
+    return this.userRepository.save(user);
   }
 
   findAll() {
@@ -37,6 +39,17 @@ export class UserService {
       throw new NotFoundException(`User not found with id ${id}`);
     }
     return user;
+  }
+
+  async findOneOrFail(
+    conditions: FindConditions<User>,
+    options?: FindOneOptions<User>,
+  ) {
+    try {
+      return await this.userRepository.findOneOrFail(conditions, options);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
