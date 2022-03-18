@@ -37,3 +37,6 @@ lerna-debug.log*
 
 # DOCKER
 .ignore
+
+# env
+.env
