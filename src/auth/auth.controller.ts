@@ -11,4 +11,10 @@ export class AuthController {
   async login(@Req() req: any) {
     return this.authService.login(req.user);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('validate-token')
+  async validateToken(@Req() req: any) {
+    return this.authService.validateToken(req.user);
+  }
 }
