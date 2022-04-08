@@ -1,5 +1,6 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { hashSync } from 'bcrypt';
+import { Community } from 'src/community/entities/community.entity';
 
 @Entity()
 export class User {
@@ -26,4 +27,8 @@ export class User {
     this.password = hashSync(this.password, 10);
     console.log(this.password);
   }
+
+  @ManyToOne(() => Community)
+  @JoinColumn()
+  community: Community
 }
