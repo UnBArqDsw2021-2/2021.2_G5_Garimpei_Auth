@@ -1,4 +1,11 @@
-import { IsEmail, IsInt, IsNumber, IsOptional, IsPhoneNumber, IsString, IsUrl, Min } from "class-validator";
+import { Type } from "class-transformer";
+import { IsEmail, IsInt, IsNumber, IsOptional, IsPhoneNumber, IsString, IsUrl, Min, ValidateNested } from "class-validator";
+
+class UserDto {
+    @IsInt()
+    @Min(1)
+    id: number
+}
 
 export class CreateCommunityDto {
     @IsString()
@@ -7,9 +14,9 @@ export class CreateCommunityDto {
     @IsEmail()
     email: string;
 
-    @IsInt()
-    @Min(0)
-    adminId: number;
+    @ValidateNested()
+    @Type(() => UserDto)
+    admin: UserDto;
 
     @IsString()
     city: string;

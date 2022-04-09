@@ -1,33 +1,43 @@
-import { IsNumber, IsString } from "class-validator";
+import { IsEmail, IsNumber, IsOptional, IsPhoneNumber, IsString, IsUrl } from "class-validator";
 
 export class UpdateCommunityDto {
     @IsString()
-    name?: string;
+    @IsOptional()
+    name: string;
+
+    @IsEmail()
+    @IsOptional()
+    email: string;
 
     @IsString()
-    description?: string;
+    @IsOptional()
+    city: string;
 
+    @IsPhoneNumber('BR')
+    @IsOptional()
+    phone: string;
+
+    @IsOptional()
     @IsString()
-    phone?: string;
+    description: string;
 
+    @IsOptional()
     @IsString()
-    location?: string;
+    location: string;
 
+    @IsOptional()
     @IsString()
-    city?: string;
+    cep: string;
 
-    @IsString()
-    cep?: string;
-
+    @IsOptional()
     @IsNumber()
-    latitude?: number;
+    latitude: number;
 
-    @IsString()
-    email?: string;
+    @IsOptional()
+    @IsUrl()
+    banner: string;
 
-    @IsString()
-    banner?: string;
-
-    @IsString()
-    photo?: string;
+    @IsOptional()
+    @IsUrl()
+    photo: string;
 }
