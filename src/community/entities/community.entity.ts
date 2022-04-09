@@ -10,30 +10,34 @@ export class Community {
     name: string;
 
     @Column()
-    description: string;
+    email: string;
 
-    @Column()
-    phone: string;
-
-    @Column()
-    location: string;
+    @OneToOne(() => User, {nullable: false})
+    @JoinColumn()
+    admin: User
 
     @Column()
     city: string;
 
     @Column()
+    phone: string;
+
+    @Column({ nullable: true })
+    description: string;
+
+    @Column({ nullable: true })
+    location: string;
+
+    @Column({ nullable: true })
     cep: string;
 
-    @Column()
+    @Column({ nullable: true })
     latitude: number;
 
-    @Column()
-    email: string;
-
-    @Column()
+    @Column({ nullable: true })
     banner: string;
 
-    @Column()
+    @Column({ nullable: true })
     photo: string;
 
     @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
@@ -41,8 +45,4 @@ export class Community {
 
     @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
     updatedAt: Date;
-
-    @OneToOne(() => User)
-    @JoinColumn()
-    admin: User
 }
