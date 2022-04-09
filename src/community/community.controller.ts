@@ -14,7 +14,7 @@ export class CommunityController {
 
     @Get()
     findAll() {
-        return []
+        return this.communityService.findAll();
     }
 
     @Get(':id')
