@@ -26,25 +26,25 @@ export class CreateCommunityDto {
 
     @IsOptional()
     @IsString()
-    description: string;
+    description?: string;
 
     @IsOptional()
     @IsString()
-    location: string;
+    location?: string;
 
     @IsOptional()
     @IsString()
-    cep: string;
+    cep?: string;
 
     @IsOptional()
     @IsNumber()
-    latitude: number;
+    latitude?: number;
 
     @IsOptional()
     @IsUrl()
-    banner: string;
+    banner?: string;
 
     @IsOptional()
     @IsUrl()
-    photo: string;
+    photo?: string;
 }
