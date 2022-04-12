@@ -1,5 +1,6 @@
 import {
   BeforeInsert,
+  BeforeUpdate,
   Column,
   Entity,
   JoinColumn,
@@ -32,7 +33,6 @@ export class User {
   @BeforeInsert()
   hashPassword() {
     this.password = hashSync(this.password, 10);
-    console.log(this.password);
   }
 
   @ManyToOne(() => Community)

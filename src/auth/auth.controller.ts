@@ -1,4 +1,12 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Post,
+  Put,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 
@@ -16,5 +24,11 @@ export class AuthController {
   @Post('validate-token')
   async validateToken(@Req() req: any) {
     return this.authService.validateToken(req.user);
+  }
+
+  @Put('reset-password/:id')
+  async resetPassword(@Param('id') id: number, @Body() password: string) {
+    console.log('Malhas');
+    return this.authService.resetPassword(id, password);
   }
 }
