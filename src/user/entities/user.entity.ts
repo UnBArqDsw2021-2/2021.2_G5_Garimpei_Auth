@@ -1,4 +1,11 @@
-import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { hashSync } from 'bcrypt';
 import { Community } from 'src/community/entities/community.entity';
 
@@ -30,5 +37,5 @@ export class User {
 
   @ManyToOne(() => Community)
   @JoinColumn()
-  community: Community
+  community: Community;
 }
