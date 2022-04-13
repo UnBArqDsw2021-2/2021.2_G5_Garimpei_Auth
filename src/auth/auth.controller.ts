@@ -8,6 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -27,8 +28,10 @@ export class AuthController {
   }
 
   @Put('reset-password/:id')
-  async resetPassword(@Param('id') id: number, @Body() password: string) {
-    console.log('Malhas');
-    return this.authService.resetPassword(id, password);
+  async resetPassword(
+    @Param('id') id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.authService.resetPassword(id, updateUserDto);
   }
 }

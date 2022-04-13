@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { hashSync } from 'bcrypt';
 import { Community } from 'src/community/entities/community.entity';
+import { InternalServerErrorException } from '@nestjs/common';
 
 @Entity()
 export class User {
@@ -31,8 +32,17 @@ export class User {
   email: string;
 
   @BeforeInsert()
+  @BeforeUpdate()
   hashPassword() {
-    this.password = hashSync(this.password, 10);
+    if (this.password) {
+      try {
+        this.password = hashSync(this.password, 10);
+      } catch (e) {
+        throw new InternalServerErrorException(
+          `There's something wrong with hash lib`,
+        );
+      }
+    }
   }
 
   @ManyToOne(() => Community)

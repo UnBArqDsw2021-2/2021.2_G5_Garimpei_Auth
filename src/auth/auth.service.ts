@@ -5,18 +5,19 @@ import {
 } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
-import { compareSync, hashSync } from 'bcrypt';
+import { compareSync } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UserService,
-    private readonly jwtService: JwtService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async login(user: User) {
@@ -53,17 +54,17 @@ export class AuthService {
     return userData;
   }
 
-  async resetPassword(id: number, password: string) {
-    let userData: User;
+  async resetPassword(id: number, updateUserDto: UpdateUserDto) {
     try {
-      userData = await this.userService.findOneOrFail({ id });
-      const hashedPassword = hashSync(password, 10);
-      console.log(hashedPassword);
-      await this.userRepository.update({ id }, { password: hashedPassword });
-    } catch (error) {
-      throw new NotFoundException(`User not found with id ${id}`);
-    }
+      const user = await this.userRepository.findOne(id);
 
-    return userData;
+      if (!user) {
+        throw new NotFoundException(`User not found with id ${id}`);
+      }
+      await this.userRepository.save(Object.assign(user, updateUserDto));
+    } catch (error) {
+      throw new BadRequestException('Invalid operation');
+    }
+    return await this.userRepository.findOne(id);
   }
 }
