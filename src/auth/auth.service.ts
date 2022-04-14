@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
+import { sendEmail } from '../utils/sendEmail';
 
 @Injectable()
 export class AuthService {
@@ -52,6 +53,16 @@ export class AuthService {
     }
 
     return userData;
+  }
+
+  async forgotPassword(email: string) {
+    const token = this.jwtService.sign({ email });
+    const recoverLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+    try {
+      await sendEmail(email, recoverLink);
+    } catch (e) {
+      console.error('sendEmail error ', e);
+    }
   }
 
   async resetPassword(id: number, updateUserDto: UpdateUserDto) {

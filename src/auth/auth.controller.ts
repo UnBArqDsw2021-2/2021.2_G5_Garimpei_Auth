@@ -27,6 +27,12 @@ export class AuthController {
     return this.authService.validateToken(req.user);
   }
 
+  @Post('forgot-password')
+  async forgotPassword(@Body() req: any) {
+    return this.authService.forgotPassword(req.email);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Put('reset-password/:id')
   async resetPassword(
     @Param('id') id: number,
