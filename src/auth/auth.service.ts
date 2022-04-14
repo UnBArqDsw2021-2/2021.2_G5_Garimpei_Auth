@@ -58,8 +58,11 @@ export class AuthService {
   async forgotPassword(email: string) {
     const token = this.jwtService.sign({ email });
     const recoverLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+    const emailSubject = 'Redefinição de Senha';
+    const emailHtml = `<a href="${recoverLink}">Redefina sua senha clicando aqui.</a>`;
+
     try {
-      await sendEmail(email, recoverLink);
+      await sendEmail(email, emailSubject, emailHtml);
     } catch (e) {
       console.error('sendEmail error ', e);
     }
