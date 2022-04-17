@@ -56,8 +56,8 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(`User not found with id ${id}`);
     }
-    await this.userRepository.update({ id }, updateUserDto);
-    return this.userRepository.findOne(id);
+    await this.userRepository.save(Object.assign(user, updateUserDto));
+    return await this.userRepository.findOne(id);
   }
 
   async remove(id: number) {

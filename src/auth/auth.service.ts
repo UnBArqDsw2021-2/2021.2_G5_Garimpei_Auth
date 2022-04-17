@@ -1,12 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { compareSync } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateUserDto } from 'src/user/dto/update-user.dto';
+import { sendEmail } from '../utils/sendEmail';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
   ) {}
@@ -24,11 +34,11 @@ export class AuthService {
     try {
       user = await this.userService.findOneOrFail({ email });
     } catch (error) {
-      return null;
+      throw new BadRequestException('Invalid credentials');
     }
 
     const isPasswordValid = compareSync(password, user.password);
-    if (!isPasswordValid) return null;
+    if (!isPasswordValid) throw new BadRequestException('Invalid credentials');
 
     return user;
   }
@@ -39,9 +49,36 @@ export class AuthService {
     try {
       userData = await this.userService.findOneOrFail({ email });
     } catch (error) {
-      return null;
+      throw new NotFoundException(`User not found with email ${email}`);
     }
 
     return userData;
+  }
+
+  async forgotPassword(email: string) {
+    const token = this.jwtService.sign({ email });
+    const recoverLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+    const emailSubject = 'Redefinição de Senha';
+    const emailHtml = `<a href="${recoverLink}">Redefina sua senha clicando aqui.</a>`;
+
+    try {
+      await sendEmail(email, emailSubject, emailHtml);
+    } catch (e) {
+      console.error('sendEmail error ', e);
+    }
+  }
+
+  async resetPassword(id: number, updateUserDto: UpdateUserDto) {
+    try {
+      const user = await this.userRepository.findOne(id);
+
+      if (!user) {
+        throw new NotFoundException(`User not found with id ${id}`);
+      }
+      await this.userRepository.save(Object.assign(user, updateUserDto));
+    } catch (error) {
+      throw new BadRequestException('Invalid operation');
+    }
+    return await this.userRepository.findOne(id);
   }
 }
