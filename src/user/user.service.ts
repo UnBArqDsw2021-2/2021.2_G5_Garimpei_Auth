@@ -23,8 +23,14 @@ export class UserService {
     if (userExists) {
       throw new BadRequestException(`Email already in use`);
     }
-    const user = this.userRepository.create(createUserDto);
-    return this.userRepository.save(user);
+    const user = await this.userRepository.create(createUserDto);
+    const savedUser = await this.userRepository.save(user);
+
+    return {
+      id: savedUser.id,
+      email: savedUser.email,
+      nickname: savedUser.nickname,
+    };
   }
 
   findAll() {
